@@ -16,10 +16,22 @@ jobs:
         uses: jfrog/setup-jfrog-cli@v4
         env:
           JF_URL: ${{ vars.JF_URL }}
+          JF_GIT_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
+          XRAY_URL: ${{ vars.XRAY_URL }}
         with:
-          oidc-provider-name: hemlata-bhatt/test_repo@github
+          oidc-provider-name: hemlata-bhatt/Test-Repo-Jfrog@github
 
       - name: Run JFrog CLI
         run: |
           # Ping the server
-          jf rt ping
+          jf config add my-jfrog --artifactory-url="${{ vars.JF_URL }}" --xray-url="${{ vars.XRAY_URL }}" --access-token="${{ secrets.JFROG_ACCESS_TOKEN }}" --interactive=false
+          jf rt ping --url https://skf.jfrog.io/artifactory
+      
+      - name: Verify configuration
+        run: jf config show my-jfrog
+  
+      - name: Scan dependencies
+        run: jf audit --server-id my-jfrog
+
+      - name: Scan source code
+        run: jf scan --server-id my-jfrog
