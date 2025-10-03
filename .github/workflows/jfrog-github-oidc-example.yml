@@ -19,7 +19,7 @@ jobs:
           JF_GIT_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
           XRAY_URL: ${{ vars.XRAY_URL }}
         with:
-          oidc-provider-name:github
+          oidc-provider-name: hemlata-bhatt/test_repo@github
 
       - name: Run JFrog CLI
         run: |
